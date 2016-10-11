@@ -3,7 +3,8 @@
  */
 
 var express = require('express'),
-    mongoose = require('mongoose');
+    mongoose = require('mongoose'),
+    bodyParser = require('body-parser');
 
 var db = mongoose.connect('mongodb://deneme:deneme@ds055626.mlab.com:55626/mongodeneme');
 
@@ -12,22 +13,13 @@ var app = express();
 
 var port = process.env.PORT || 3000;
 
-var bookRouter = express.Router();
+app.use(bodyParser.urlencoded({extended:true}));
+app.use(bodyParser.json());
 
-bookRouter.route('/Books')
-    .get(function(req,res){
-
-        Book.find(function(err,books){
-            if(err)
-                console.log(err);
-            else
-                res.json(books);
-        })
-
-    });
+var bookRouter = require('./Routes/bookRoutes')(Book);
 
 
-app.use('/api', bookRouter);
+app.use('/api/books', bookRouter);
 
 app.get('/', function(req,res){
     //console.log(req);
